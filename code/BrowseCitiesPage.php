@@ -4,22 +4,22 @@ class BrowseCitiesPage extends BrowseAbstractPage {
 
 	/**
 	 * Standard SS static
-	 **/ 
+	 **/
 	static $icon = "geobrowser/images/treeicons/BrowseCitiesPage";
 
 	/**
 	 * Standard SS static
-	 **/ 
+	 **/
 	static $default_parent = "BrowseRegionsPage";
 
 	/**
 	 * Standard SS static
-	 **/ 
+	 **/
 	static $can_be_root = false;
 
 	/**
 	 * Standard SS static
-	 **/ 
+	 **/
 	static $db = array(
 		"Latitude" => "Double",
 		"Longitude" => "Double",
@@ -30,16 +30,16 @@ class BrowseCitiesPage extends BrowseAbstractPage {
 
 	/**
 	 * Standard SS Static
-	 **/ 
+	 **/
 	static $defaults = array(
 		"ShowInMenus" => false
 	);
-	
+
 	/**
 	 * @param Array - $googleMapAddressArray: an array of geographic data provided by google maps
 	 * @param Int - $maxRadius: maximum number of kilometers (as the bird flies) between search point defined in $googleMapAddressArray and city found.
 	 * @return Object | false : returns a BrowseCitiesPage or false if nothing was found
-	 **/ 
+	 **/
 	public static function get_clostest_city_page($googleMapAddressArray, $maxRadius = 500) {
 		$cityPage = null;
 		$suburbPage	= null;
@@ -48,7 +48,7 @@ class BrowseCitiesPage extends BrowseAbstractPage {
 		$newDistance = $maxRadius+1;
 		$existingPage = null;
 		$newPage = null;
-		$radiusSelectionSQL = self::radiusDefinitionOtherTable($googleMapAddressArray[0], $googleMapAddressArray[1], "BrowseCitiesPage", "Latitude", "Longitude");
+		$radiusSelectionSQL = self::radiusDefinitionOtherTable($googleMapAddressArray["Longitude"], $googleMapAddressArray["Latitude"], "BrowseCitiesPage", "Latitude", "Longitude");
 		$sqlQuery = new SQLQuery();
 		$sqlQuery->select = array("{$bt}BrowseCitiesPage{$bt}.{$bt}ID{$bt}, ". $radiusSelectionSQL." as distance");
 		$sqlQuery->from[] = "{$bt}BrowseCitiesPage{$bt}";
@@ -61,7 +61,7 @@ class BrowseCitiesPage extends BrowseAbstractPage {
 			$existingDistance = $row["distance"];
 			$existingPage = DataObject::get_by_id("BrowseCitiesPage", $row["ID"]);
 		}
-		$radiusSelectionSQL = self::radiusDefinitionOtherTable($googleMapAddressArray[0], $googleMapAddressArray[1], "cities", "Latitude", "Longitude");
+		$radiusSelectionSQL = self::radiusDefinitionOtherTable($googleMapAddressArray["Longitude"], $googleMapAddressArray["Latitude"], "cities", "Latitude", "Longitude");
 		$sqlQuery = new SQLQuery();
 		$sqlQuery->select = array("cities.CityID", $radiusSelectionSQL." as distance");
 		$sqlQuery->from[] = "{$bt}cities{$bt}";
@@ -112,14 +112,14 @@ class BrowseCitiesPage extends BrowseAbstractPage {
 	public function GeoLevelName() {
 		return "Cities";
 	}
-	
+
 	/**
 	 * number for page level.
 	 **/
 	public function GeoLevelNumber() {
 		return 3;
 	}
-	
+
 	/**
 	 * This static method creates a city page and all the required parent pages...
 	 *@param Int - $CityID: the ID for the city to create
@@ -214,7 +214,7 @@ class BrowseCitiesPage extends BrowseAbstractPage {
 	/**
 	 * fix URLS
 	 * NOTE: you must set get variables: urls, from and to....
-	 **/ 
+	 **/
 	public function requireDefaultRecords() {
 		parent::requireDefaultRecords();
 		if(isset($_GET["urls"]) && isset($_GET["from"]) && isset($_GET["to"]) ) {
@@ -235,8 +235,8 @@ class BrowseCitiesPage extends BrowseAbstractPage {
 	/**
 	 * Create a page
 	 * @param Array - $city: the data for the city
-	 * @param Object $parent: BrowseRegionsPage 
-	 **/ 
+	 * @param Object $parent: BrowseRegionsPage
+	 **/
 	public function CreateCity(array $city, BrowseRegionsPage $parent) {
 		if($parent && isset($city["City"])) {
 			$name = htmlentities($city["City"]);
